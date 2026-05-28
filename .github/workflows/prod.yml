@@ -29,16 +29,30 @@ jobs:
           push: true
           tags: pdgamersg/todo-app-week-39:${{ github.sha }}
       - name: Clone staging-ops repo, update image tags, and push tags
-        env:
-          PAT: ${{ secrets.PAT }}
-        run: |
-          git clone https://github.com/PDGamerSG/argo-deployment
-          cd argo-deployment
+  env:
+    PAT: ${{ secrets.PAT }}
+  run: |
+    git clone https://github.com/PDGamerSG/argo-deployment
+    cd argo-deployment
 
-          sed -i "s|pdgamersg/todo-app-week-39.*|pdgamersg/todo-app-week-39:${{ github.sha }}|g" manifest.yml
+    echo "===== BEFORE ====="
+    cat manifest.yml
 
-          git config user.name "GitHub Actions Bot"
-          git config user.email "actions@github.com"
-          git add .
-          git commit -m "Update school server image tags to ${{ github.sha }}"
-          git push https://${PAT}@github.com/PDGamerSG/argo-deployment.git main
+    sed -i "s|pdgamersg/todo-app-week-39.*|pdgamersg/todo-app-week-39:${{ github.sha }}|g" manifest.yml
+
+    echo "===== AFTER ====="
+    cat manifest.yml
+
+    git config user.name "GitHub Actions Bot"
+    git config user.email "actions@github.com"
+
+    git add .
+
+    git status
+
+    if git diff --staged --quiet; then
+      echo "No changes to commit"
+    else
+      git commit -m "Update image tag to ${{ github.sha }}"
+      git push https://${PAT}@github.com/PDGamerSG/argo-deployment.git main
+    fi
