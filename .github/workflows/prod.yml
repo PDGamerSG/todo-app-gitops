@@ -27,4 +27,4 @@ jobs:
           context: .
           file: Dockerfile
           push: true
-          tags: 100xdevs/todo-app-week-39:${{ github.sha }}
+          tags: pdgamersg/todo-app-week-39:${{ github.sha }}
